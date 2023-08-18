@@ -14,6 +14,23 @@ DMA_HandleTypeDef hdma_memtomem;
 uint8_t Buffer_Src[]={0,1,2,3,4,5,6,7,8,9};
 uint8_t Buffer_Dest[10];
 
+void XferCpltCallback(DMA_HandleTypeDef *hdma)
+{
+    printf("Done!");
+  __NOP(); //Line reached only if transfer was successful. Toggle a breakpoint here
+}
+
+void DMA2_Stream0_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Stream0_IRQn 0 */
+
+  /* USER CODE END DMA2_Stream0_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_memtomem);
+  /* USER CODE BEGIN DMA2_Stream0_IRQn 1 */
+
+  /* USER CODE END DMA2_Stream0_IRQn 1 */
+}
+
 void ExampleInit(void *data)
 {
 
@@ -37,11 +54,15 @@ void ExampleInit(void *data)
   hdma_memtomem.Init.MemBurst = DMA_MBURST_SINGLE;
   hdma_memtomem.Init.PeriphBurst = DMA_PBURST_SINGLE;
 
+  hdma_memtomem.XferCpltCallback = XferCpltCallback;
   if(HAL_DMA_Init(&hdma_memtomem) != HAL_OK)
   {
     printf("DMA init Failed!");
     __NOP();
   }
+
+  HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
 
 }
 
@@ -68,18 +89,18 @@ ParserReturnVal_t CmdExample(int mode)
   /* Put your command implementation here */
   printf("Example Command\n");
   
-  HAL_DMA_Start(&hdma_memtomem, (uint32_t) Buffer_Src, (uint32_t) Buffer_Dest, 10);
-  if(HAL_DMA_PollForTransfer(&hdma_memtomem, HAL_DMA_FULL_TRANSFER, 100) != HAL_OK)
-  {
-    __NOP();
-  }
+  HAL_DMA_Start_IT(&hdma_memtomem, (uint32_t) Buffer_Src, (uint32_t) Buffer_Dest, 10);
+//   if(HAL_DMA_PollForTransfer(&hdma_memtomem, HAL_DMA_FULL_TRANSFER, 100) != HAL_OK)
+//   {
+//     __NOP();
+//   }
 
-  for(int i = 0; i < 10; i++)
-    printf("%d \t", Buffer_Dest[i]);
+//   for(int i = 0; i < 10; i++)
+//     printf("%d \t", Buffer_Dest[i]);
 
   printf("\n");
 
   return CmdReturnOk;
 }
 
-ADD_CMD("example",CmdExample,"                Example Command")
+ADD_CMD("dma",CmdExample,"                dma Command")
