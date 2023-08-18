@@ -10,19 +10,13 @@
 
 #include "common.h"
 
-DMA_HandleTypeDef hdma_memtomem;
-
 void ExampleInit(void *data)
 {
 
   /* Place Initialization things here.  This function gets called once
    * at startup.
    */
-  hdma_memtomem.Instance = DMA2_Stream0;
-  hdma_memtomem.Init.Channel = DMA_CHANNEL_0;
-  hdma_memtomem.Init.Direction = DMA_MEMORY_TO_MEMORY;
-  hdma_memtomem.Init.PeriphInc = DMA_PINC_ENABLE;
-  hdma_memtomem.Init.MemInc = DMA_MINC_ENABLE;
+
 
 }
 

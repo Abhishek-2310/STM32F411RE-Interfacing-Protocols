@@ -4,7 +4,7 @@
 
 # C source files for the project
 PROJ_NAME = simple_monitor
-SRCS  = my_main.c mycode.s mytest.c example.c
+SRCS  = my_main.c mycode.s mytest.c dma_empl.c
 BUILD = build
 #PROCESSOR = STM32G474xx
 #PROCESSOR = STM32L432xx
@@ -132,6 +132,8 @@ SRCS   += $(HAL_SRC)/$(HAL_PREFIX)_hal_rcc.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_adc_ex.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_dac.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_dac_ex.c \
+          $(HAL_SRC)/$(HAL_PREFIX)_hal_dma.c \
+          $(HAL_SRC)/$(HAL_PREFIX)_hal_dma_ex.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_tim.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_tim_ex.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_flash.c \
