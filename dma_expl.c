@@ -6,19 +6,24 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <stdint.h>
 
 #include "common.h"
 
 #define ADC_BUF_LEN 4096
+// #define LD2_GPIO_Port GPIOA
+// #define LD2_Pin 5
 
 // Handles
-DMA_HandleTypeDef hdma_adc1;
+DMA_HandleTypeDef hdma_adc1_to_mem;
+
 ADC_HandleTypeDef hadc1;
 
 // Globals
 uint8_t Buffer_Src[]={0,1,2,3,4,5,6,7,8,9};
 uint8_t Buffer_Dest[10];
+
 uint16_t adc_buf[ADC_BUF_LEN];
 // void XferCpltCallback(DMA_HandleTypeDef *hdma)
 // {
@@ -26,16 +31,6 @@ uint16_t adc_buf[ADC_BUF_LEN];
 //   __NOP(); //Line reached only if transfer was successful. Toggle a breakpoint here
 // }
 
-void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc) 
-{
-  printf("Half done!");
-}
-
-// Called when buffer is completely filled
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
-{
-  printf("Fully done!");
-}
 
 // Interrupt handler
 void DMA2_Stream0_IRQHandler(void)
@@ -43,7 +38,7 @@ void DMA2_Stream0_IRQHandler(void)
   /* USER CODE BEGIN DMA2_Stream0_IRQn 0 */
 
   /* USER CODE END DMA2_Stream0_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_adc1);
+  HAL_DMA_IRQHandler(&hdma_adc1_to_mem);
   /* USER CODE BEGIN DMA2_Stream0_IRQn 1 */
 
   /* USER CODE END DMA2_Stream0_IRQn 1 */
@@ -56,26 +51,26 @@ void ExampleInit(void *data)
    * at startup.
    */
 
-  // DMA
+  // DMA_ADC1
   __HAL_RCC_DMA2_CLK_ENABLE();
 
   /* ADC1 DMA Init */
-  hdma_adc1.Instance = DMA2_Stream4;
-  hdma_adc1.Init.Channel = DMA_CHANNEL_0;
-  hdma_adc1.Init.Direction = DMA_PERIPH_TO_MEMORY;
-  hdma_adc1.Init.PeriphInc = DMA_PINC_DISABLE;
-  hdma_adc1.Init.MemInc = DMA_MINC_ENABLE;
-  hdma_adc1.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
-  hdma_adc1.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
-  hdma_adc1.Init.Mode = DMA_CIRCULAR;
-  hdma_adc1.Init.Priority = DMA_PRIORITY_LOW;
-  hdma_adc1.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
-  if (HAL_DMA_Init(&hdma_adc1) != HAL_OK)
+  hdma_adc1_to_mem.Instance = DMA2_Stream4;
+  hdma_adc1_to_mem.Init.Channel = DMA_CHANNEL_0;
+  hdma_adc1_to_mem.Init.Direction = DMA_PERIPH_TO_MEMORY;
+  hdma_adc1_to_mem.Init.PeriphInc = DMA_PINC_DISABLE;
+  hdma_adc1_to_mem.Init.MemInc = DMA_MINC_ENABLE;
+  hdma_adc1_to_mem.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+  hdma_adc1_to_mem.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
+  hdma_adc1_to_mem.Init.Mode = DMA_CIRCULAR;
+  hdma_adc1_to_mem.Init.Priority = DMA_PRIORITY_LOW;
+  hdma_adc1_to_mem.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+  if (HAL_DMA_Init(&hdma_adc1_to_mem) != HAL_OK)
   {
-    printf("DMA init Failed!");
+    printf("DMA2 init Failed!");
   }
 
-  __HAL_LINKDMA(&hadc1,DMA_Handle,hdma_adc1);
+  __HAL_LINKDMA(&hadc1, DMA_Handle, hdma_adc1_to_mem);
 
   HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
@@ -146,20 +141,20 @@ ParserReturnVal_t CmdExample(int mode)
   if(mode != CMD_INTERACTIVE) return CmdReturnOk;
 
   /* Put your command implementation here */
-  printf("Example Command\n");
+  printf("DMA Example\n");
 
   HAL_ADC_Start_DMA(&hadc1, (uint32_t *) adc_buf, 4096);
 
-// HAL_DMA_Start(&hdma_adc1, (uint32_t) Buffer_Src, (uint32_t) Buffer_Dest, 10);
+// HAL_DMA_Start(&hdma_adc1_to_mem, (uint32_t) Buffer_Src, (uint32_t) Buffer_Dest, 10);
 
-//   if(HAL_DMA_PollForTransfer(&hdma_adc1, HAL_DMA_FULL_TRANSFER, 100) != HAL_OK)
+//   if(HAL_DMA_PollForTransfer(&hdma_adc1_to_mem, HAL_DMA_FULL_TRANSFER, 100) != HAL_OK)
 //   {
 //     __NOP();
 //   }
 
 //   for(int i = 0; i < 10; i++)
 //     printf("%d \t", Buffer_Dest[i]);
-    printf("%d \t", adc_buf[100]);
+  printf("%d \t", adc_buf[100]);
 
   printf("\n");
 

@@ -19,7 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include<stdio.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -44,6 +44,7 @@ IWDG_HandleTypeDef hiwdg;
 
 UART_HandleTypeDef huart2;
 
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -53,6 +54,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_IWDG_Init(void);
+
 /* USER CODE BEGIN PFP */
 void my_init(void);
 void my_main(void);
@@ -101,6 +103,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
