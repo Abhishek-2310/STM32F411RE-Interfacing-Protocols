@@ -10,6 +10,8 @@
 
 #include "common.h"
 
+extern UART_HandleTypeDef huart2;
+
 void ExampleInit(void *data)
 {
 
@@ -42,7 +44,12 @@ ParserReturnVal_t CmdExample(int mode)
 
   /* Put your command implementation here */
   printf("Example Command\n");
-  
+
+  uint8_t data[] = "HELLO WORLD \r\n";
+
+  HAL_UART_Transmit(&huart2, (uint8_t *) data, sizeof(data), 10);
+  // HAL_Delay(250);
+
   return CmdReturnOk;
 }
 
