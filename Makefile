@@ -4,7 +4,7 @@
 
 # C source files for the project
 PROJ_NAME = simple_monitor
-SRCS  = my_main.c mycode.s mytest.c example.c spi_expl.c
+SRCS  = my_main.c mytest.c mycode.s spi_expl.c ssd1331.c fonts.c
 BUILD = build
 #PROCESSOR = STM32G474xx
 #PROCESSOR = STM32L432xx
@@ -134,6 +134,7 @@ SRCS   += $(HAL_SRC)/$(HAL_PREFIX)_hal_rcc.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_dac_ex.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_dma.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_dma_ex.c \
+          $(HAL_SRC)/$(HAL_PREFIX)_hal_spi.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_tim.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_tim_ex.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_flash.c \
@@ -154,6 +155,7 @@ SIZE=$(PREFIX)size
 FLOAT = -mfpu=fpv4-sp-d16 -mfloat-abi=hard
 #FLOAT = -mfpu=fpv4-sp-d16 -mfloat-abi=soft
 
+INCLUDES = includes
 
 CFLAGS  = -Wall -g -std=gnu99
 CFLAGS += -Os
@@ -172,7 +174,7 @@ CFLAGS += -I $(CMSIS_INC)
 CFLAGS += -I $(CMSIS_DEV_INC)
 CFLAGS += -I $(CUBEMX_INC)
 CFLAGS += -I $(HAL_INC)
-CFLAGS += -I $(MONITOR)
+CFLAGS += -I $(INCLUDES)
 CFLAGS += -I $(MONITOR)/decoder
 CFLAGS += --specs=nano.specs -u _printf_float
 #CFLAGS += -flto
@@ -217,7 +219,7 @@ DEPS = $(addprefix deps/,$(addsuffix .d,$(basename $(FILES))))
 all: $(BUILD) $(PROJ_NAME).elf $(PROJ_NAME).dfu $(PROJ_NAME).hex \
 	$(PROJ_NAME).bin
 
--include $(DEPS)
+# -include $(DEPS)
 
 $(BUILD):
 	mkdir -p $(sort $(dir $(OBJS)))
