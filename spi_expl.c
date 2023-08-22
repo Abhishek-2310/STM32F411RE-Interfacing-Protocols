@@ -63,7 +63,6 @@ void SPI_Init(void *data)
 
   ssd1331_init();
 
-  ssd1331_draw_rect(0, 0, 94, 62, CYAN);
 }
 
 // Task Run
@@ -90,6 +89,7 @@ ParserReturnVal_t SPI_Example(int mode)
   /* Put your command implementation here */
 
   printf("SPI Command\n");
+  ssd1331_draw_rect(0, 0, 94, 62, CYAN);
 
   // HAL_Delay(250);
 
