@@ -90,3 +90,9 @@ Clone this repository to setup your environment:
 
    ```sh
    git clone https://github.com/Abhishek-2310/STM32F411RE-Interfacing-Protocols.git
+   ```
+<p align="center">
+   <img src = "https://github.com/Abhishek-2310/STM32F411RE-Interfacing-Protocols/blob/master/stm32_spi_conn.jpg" width = "450" height = "300">
+   <img src = "https://github.com/Abhishek-2310/STM32F411RE-Interfacing-Protocols/blob/master/oled.jpg" width = "300" height = "300"><br>
+   PA5->SCK, PA7->MOSI, PA8-> RES, PA9->CS, PA10->DC 
+</p>
