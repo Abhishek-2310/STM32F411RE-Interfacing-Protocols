@@ -27,7 +27,8 @@ void SPI_Init(void *data)
 
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
-  /*Configure GPIO pins : SSD1331_RES_Pin SSD1331_CS_Pin SSD1331_DC_Pin */
+  /*Configure GPIO pins : SSD1331_RES_Pin SSD1331_CS_Pin SSD1331_DC_Pin 
+  PA8 -> RES, PA9 -> CS, PA10 -> DC */
   GPIO_InitStruct.Pin = SSD1331_RES_Pin|SSD1331_CS_Pin|SSD1331_DC_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
