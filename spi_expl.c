@@ -1,7 +1,7 @@
-/* example.c:
+/* spi_expl.c:
  *
- *   Template code for implementing a simple task, using the ADD_TASK()
- *   macro.  Also contains template code for a simple monitor command.
+ *   Template code for establishing SPI communication with
+ *   SSD1331 OLED Panel 
  *
  */
 

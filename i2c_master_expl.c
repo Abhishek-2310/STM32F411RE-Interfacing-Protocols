@@ -1,12 +1,7 @@
 /* example.c:
  *
  *   Template code for implementing a simple task, using the ADD_TASK()
- *   macro.  Also contains template code for a simple monitor command. This also 
- *   implements a UART data transmit.
- * 
- *   Note: 
- *   When probing the TX/RX pins, choose the ones near to the USB port as the 
- *   PA2/PA3 are disabled by default.
+ *   macro.  Also contains template code for a simple monitor command.
  *
  */
 
@@ -17,7 +12,7 @@
 
 extern UART_HandleTypeDef huart2;
 
-void ExampleInit(void *data)
+void I2CMasterInit(void *data)
 {
 
   /* Place Initialization things here.  This function gets called once
@@ -27,7 +22,7 @@ void ExampleInit(void *data)
 
 }
 
-void ExampleTask(void *data)
+void I2CMasterTask(void *data)
 {
 
   /* Place your task functionality in this function.  This function
@@ -36,14 +31,14 @@ void ExampleTask(void *data)
    */
 }
 
-ADD_TASK(ExampleTask,  /* This is the name of the function for the task */
-	 ExampleInit,  /* This is the initialization function */
+ADD_TASK(I2CMasterTask,  /* This is the name of the function for the task */
+	 I2CMasterInit,  /* This is the initialization function */
 	 NULL,         /* This pointer is passed as 'data' to the functions */
 	 0,            /* This is the number of milliseconds between calls */
 	 "This is the help text for the task")
   
 
-ParserReturnVal_t CmdExample(int mode)
+ParserReturnVal_t I2CMasterExample(int mode)
 {
   if(mode != CMD_INTERACTIVE) return CmdReturnOk;
 
@@ -51,11 +46,11 @@ ParserReturnVal_t CmdExample(int mode)
   uint8_t data[] = "HELLO WORLD \r\n";
   HAL_UART_Transmit(&huart2, (uint8_t *) data, sizeof(data), 10);
 
-  printf("Example Command\n");
+  printf("I2C Master Command\n");
 
   // HAL_Delay(250);
 
   return CmdReturnOk;
 }
 
-ADD_CMD("example",CmdExample,"                Example Command")
+ADD_CMD("i2c_master",I2CMasterExample,"          I2C Master Command")
