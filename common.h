@@ -3,7 +3,7 @@
  *  Common include file
  */
 #ifndef __COMMON_H
-#define __COMON_H
+#define __COMMON_H
 
 #include <stdint.h>
 #include <time.h>

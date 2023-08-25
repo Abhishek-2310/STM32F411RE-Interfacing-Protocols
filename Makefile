@@ -5,7 +5,7 @@
 # C source files for the project
 PROJ_NAME = simple_monitor
 SPI_SRCS = spi_expl.c ssd1331.c fonts.c # for Oled panel
-SRCS  = my_main.c mytest.c mycode.s # $(SPI_SRCS)
+SRCS  = my_main.c mytest.c mycode.s i2c_master_expl.c# $(SPI_SRCS)
 BUILD = build
 #PROCESSOR = STM32G474xx
 #PROCESSOR = STM32L432xx
@@ -136,6 +136,7 @@ SRCS   += $(HAL_SRC)/$(HAL_PREFIX)_hal_rcc.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_dma.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_dma_ex.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_spi.c \
+          $(HAL_SRC)/$(HAL_PREFIX)_hal_i2c.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_tim.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_tim_ex.c \
           $(HAL_SRC)/$(HAL_PREFIX)_hal_flash.c \

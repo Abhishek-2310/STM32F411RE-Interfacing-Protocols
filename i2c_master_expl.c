@@ -8,9 +8,12 @@
 #include <stdio.h>
 #include <stdint.h>
 
+// #include "main.h"
 #include "common.h"
 
-extern UART_HandleTypeDef huart2;
+#define I2C_ADDR 0x5A
+
+I2C_HandleTypeDef hi2c1;
 
 void I2CMasterInit(void *data)
 {
@@ -18,8 +21,35 @@ void I2CMasterInit(void *data)
   /* Place Initialization things here.  This function gets called once
    * at startup.
    */
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+    /**I2C1 GPIO Configuration
+    PB6     ------> I2C1_SCL
+    PB7     ------> I2C1_SDA
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF4_I2C1;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+    /* Peripheral clock enable */
+    __HAL_RCC_I2C1_CLK_ENABLE();
 
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  {
+    printf("I2C init Failed!\r\n");
+  }
 }
 
 void I2CMasterTask(void *data)
@@ -43,9 +73,10 @@ ParserReturnVal_t I2CMasterExample(int mode)
   if(mode != CMD_INTERACTIVE) return CmdReturnOk;
 
   /* Put your command implementation here */
-  uint8_t data[] = "HELLO WORLD \r\n";
-  HAL_UART_Transmit(&huart2, (uint8_t *) data, sizeof(data), 10);
-
+  if (HAL_I2C_Master_Transmit(&hi2c1, I2C_ADDR, (uint8_t *)"1234", 4, HAL_MAX_DELAY) != HAL_OK)
+  {
+      asm("bkpt 255");
+  }
   printf("I2C Master Command\n");
 
   // HAL_Delay(250);
