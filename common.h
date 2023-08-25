@@ -1,6 +1,6 @@
 /* common.h:
  *
- *  Common include file
+ *  Common include files
  */
 #ifndef __COMMON_H
 #define __COMMON_H

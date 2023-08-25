@@ -2,7 +2,8 @@
  *
  *   Template code for implementing a simple task, using the ADD_TASK()
  *   macro.  Also contains template code for a simple monitor command.
- *
+ *   Also established an I2C communication protocol between a master (STM32F411RE) 
+ *   and a slave (STM32L432KC).
  */
 
 #include <stdio.h>
