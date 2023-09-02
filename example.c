@@ -48,8 +48,8 @@ ParserReturnVal_t CmdExample(int mode)
   if(mode != CMD_INTERACTIVE) return CmdReturnOk;
 
   /* Put your command implementation here */
-  uint8_t data[] = "HELLO WORLD \r\n";
-  HAL_UART_Transmit(&huart2, (uint8_t *) data, sizeof(data), 10);
+  // uint8_t data[] = "HELLO WORLD \r\n";
+  // HAL_UART_Transmit(&huart2, (uint8_t *) data, sizeof(data), 10);
 
   printf("Example Command\n");
 

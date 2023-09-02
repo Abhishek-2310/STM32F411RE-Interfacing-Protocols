@@ -14,6 +14,9 @@
 myadd:
     push {lr}
     // mov r1, #3
+    push {r0-r7}
+    bl   CmdExample           @@ call BSP function
+    pop  {r0-r7}
     add r0, r0, r1
     pop {pc}
 

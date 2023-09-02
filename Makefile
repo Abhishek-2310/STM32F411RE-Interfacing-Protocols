@@ -5,7 +5,7 @@
 # C source files for the project
 PROJ_NAME = simple_monitor
 SPI_SRCS = spi_expl.c ssd1331.c fonts.c # for Oled panel
-SRCS  = my_main.c mytest.c mycode.s test1.s i2c_master_expl.c# $(SPI_SRCS)
+SRCS  = my_main.c mytest.c mycode.s test1.s example.c# $(SPI_SRCS)
 BUILD = build
 #PROCESSOR = STM32G474xx
 #PROCESSOR = STM32L432xx
