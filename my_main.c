@@ -8,7 +8,7 @@
 
 /* This include will give us the CubeMX generated defines */
 #include "main.h"
-
+int res = 0;
 /* This function is called from the CubeMX generated main.c, after all
  * the HAL peripherals have been initialized. */
 void my_init(void)
@@ -30,7 +30,7 @@ void my_init(void)
  * inside the while(1) loop. */
 void my_main(void)
 {
-
+  res = myadd();
   TaskingRun();  /* Run all registered tasks */
   my_Loop();
 

@@ -170,6 +170,7 @@ void DFUStart(void);
 /* Assembly language hooks */
 void my_Loop(void);
 void my_Init(void);
+extern int myadd(void);
 
 
 #endif
