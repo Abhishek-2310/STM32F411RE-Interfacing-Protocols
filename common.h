@@ -150,7 +150,7 @@ void PolledPrintf(const char * restrict fmt, ...);
 /*
  * main.c functions
  */
-
+void TaskCounter(void);
 
 /* version info functions */
 void VersionPrint(void);
@@ -171,7 +171,6 @@ void DFUStart(void);
 void my_Loop(void);
 void my_Init(void);
 
-extern int myadd(int a, int b);
 
 
 #endif

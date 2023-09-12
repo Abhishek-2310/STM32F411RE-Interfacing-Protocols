@@ -30,11 +30,10 @@ void my_init(void)
  * inside the while(1) loop. */
 void my_main(void)
 {
-  res = myadd(2, 3);
   TaskingRun();  /* Run all registered tasks */
   my_Loop();
-
   WDTFeed();
+  TaskCounter();
 }
 
 ParserReturnVal_t CmdLed(int mode)
