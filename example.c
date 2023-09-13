@@ -34,6 +34,7 @@ void ExampleTask(void *data)
    * will be called repeatedly, as if you placed it inside the main
    * while(1){} loop.
    */
+
 }
 
 ADD_TASK(ExampleTask,  /* This is the name of the function for the task */
