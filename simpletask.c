@@ -4,7 +4,8 @@
 #include "common.h"
 
 static uint32_t Counter = 0;
-uint8_t led_flag = 0;
+uint8_t led_flag = 0;         // this flag is used to stop/interrupt 
+                              // the count 
 
 void TaskCounter(void)
 {
@@ -82,6 +83,7 @@ ParserReturnVal_t CountExample(int mode)
     return CmdReturnBadParameter1;
   }
 
+  // check for negative values
   if(addcount < 0)
   {
     printf("type num > 0\r\n");
@@ -97,7 +99,7 @@ ParserReturnVal_t CountExample(int mode)
 
 ADD_CMD("count",CountExample,"               Count Command")
 
-
+// To stop the count and reset it
 ParserReturnVal_t StopCount(int mode)
 {
   if(mode != CMD_INTERACTIVE) return CmdReturnOk;
