@@ -7,8 +7,10 @@ static uint32_t Counter = 0;
 
 void TaskCounter(void)
 {
-    if(Counter)
-        printf("count value: %ld\r\n",Counter--);
+  if(Counter > 0)
+    printf("count value: %ld\r\n",Counter--);
+  
+  // HAL_Delay(1000);
 }
 
 ParserReturnVal_t CountExample(int mode)
@@ -18,17 +20,20 @@ ParserReturnVal_t CountExample(int mode)
   /* Put your command implementation here */
   // uint8_t data[] = "HELLO WORLD \r\n";
   // HAL_UART_Transmit(&huart2, (uint8_t *) data, sizeof(data), 10);
-  uint32_t addcount = 0;
+  int32_t addcount = 0;
   uint32_t rc1;
 
-  rc1 = fetch_uint32_arg(&addcount);
+  rc1 = fetch_int32_arg(&addcount);
   if(rc1)
   {
     printf("Specify count!\r\n");
     return CmdReturnBadParameter1;
   }
 
-  Counter += addcount;
+  if(addcount < 0)
+    printf("Oombiya value\r\n");
+  else
+    Counter += addcount;
 
 
   // HAL_Delay(250);
