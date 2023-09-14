@@ -108,7 +108,8 @@ endif
 SRCS      += $(CUBEMX_SRC)/main.c \
              $(CUBEMX_SRC)/$(HAL_PREFIX)_it.c \
              $(CUBEMX_SRC)/$(HAL_PREFIX)_hal_msp.c \
-             $(CUBEMX_SRC)/system_$(HAL_PREFIX).c
+             $(CUBEMX_SRC)/system_$(HAL_PREFIX).c \
+			#  $(CUBEMX_SRC)/freertos.c
 
 
 # Location of CMSIS files for our device

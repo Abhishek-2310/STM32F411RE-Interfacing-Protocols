@@ -33,8 +33,6 @@ void my_main(void)
   TaskingRun();  /* Run all registered tasks */
   my_Loop();
   WDTFeed();
-  
-  TaskCounter();
 }
 
 ParserReturnVal_t CmdLed(int mode)
