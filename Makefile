@@ -4,7 +4,7 @@
 
 # C source files for the project
 PROJ_NAME = simple_monitor
-SRCS  = my_main.c mytest.c mycode.s	example.c
+# SRCS  = my_main.c mytest.c mycode.s example.c
 BUILD = build
 #PROCESSOR = STM32G474xx
 #PROCESSOR = STM32L432xx
@@ -77,7 +77,7 @@ CMSIS_DEV  = $(CMSIS)/Device/ST/STM32F4xx
 SRCS      += $(CUBEMX)/startup_stm32f411xe.s
 OPENOCD_BOARD = ./openocd/st_nucleo_f4.cfg
 CUBEMX_USES_CORE_DIR = YES
-# FREERTOS = $(CMSIS)/RTOS2
+FREERTOS_SRC_DIR = ./Middlewares/Third_Party/FreeRTOS/Source
 endif
 
 
@@ -109,7 +109,8 @@ SRCS      += $(CUBEMX_SRC)/main.c \
              $(CUBEMX_SRC)/$(HAL_PREFIX)_it.c \
              $(CUBEMX_SRC)/$(HAL_PREFIX)_hal_msp.c \
              $(CUBEMX_SRC)/system_$(HAL_PREFIX).c \
-			#  $(CUBEMX_SRC)/freertos.c
+             $(CUBEMX_SRC)/$(HAL_PREFIX)_hal_timebase_tim.c \
+			 $(CUBEMX_SRC)/freertos.c
 
 
 # Location of CMSIS files for our device
@@ -145,6 +146,25 @@ SRCS   += $(HAL_SRC)/$(HAL_PREFIX)_hal_rcc.c \
 	  $(HAL_SRC)/$(HAL_PREFIX)_hal_pwr.c \
 	  $(HAL_SRC)/$(HAL_PREFIX)_hal_pwr_ex.c
 
+# Middleware/FreeRTOS
+SRCS += $(FREERTOS_SRC_DIR)/CMSIS_RTOS_V2/cmsis_os2.c \
+		$(FREERTOS_SRC_DIR)/croutine.c \
+		$(FREERTOS_SRC_DIR)/event_groups.c \
+		$(FREERTOS_SRC_DIR)/list.c \
+		$(FREERTOS_SRC_DIR)/queue.c \
+		$(FREERTOS_SRC_DIR)/stream_buffer.c \
+		$(FREERTOS_SRC_DIR)/tasks.c \
+		$(FREERTOS_SRC_DIR)/timers.c \
+		$(FREERTOS_SRC_DIR)/portable/GCC/ARM_CM4F/port.c \
+		$(FREERTOS_SRC_DIR)/portable/MemMang/heap_4.c
+
+FREERTOS_INC = 	$(FREERTOS_SRC_DIR)/include \
+				$(FREERTOS_SRC_DIR)/CMSIS_RTOS_V2 \
+				$(FREERTOS_SRC_DIR)/portable/GCC/ARM_CM4F
+
+
+
+
 PREFIX	=	arm-none-eabi-
 CC=$(PREFIX)gcc
 AR=$(PREFIX)ar
@@ -158,7 +178,7 @@ SIZE=$(PREFIX)size
 FLOAT = -mfpu=fpv4-sp-d16 -mfloat-abi=hard
 #FLOAT = -mfpu=fpv4-sp-d16 -mfloat-abi=soft
 
-INCLUDES = includes
+# INCLUDES = includes
 
 CFLAGS  = -Wall -g -std=gnu99
 CFLAGS += -Os
@@ -177,8 +197,9 @@ CFLAGS += -I $(CMSIS_INC)
 CFLAGS += -I $(CMSIS_DEV_INC)
 CFLAGS += -I $(CUBEMX_INC)
 CFLAGS += -I $(HAL_INC)
-CFLAGS += -I $(INCLUDES)
+# CFLAGS += -I $(INCLUDES)
 CFLAGS += -I $(MONITOR)/decoder
+CFLAGS += $(foreach D, $(FREERTOS_INC), -I$(D))
 CFLAGS += --specs=nano.specs -u _printf_float
 #CFLAGS += -flto
 
@@ -188,11 +209,11 @@ CFLAGS += --specs=nano.specs -u _printf_float
 # items, and then generate the code, the preprocessor will tell you
 # that there are multiple definitions for these macros.  Just remove
 # the offending one from this list, and rebuild.
-CFLAGS += -DHAL_TIM_MODULE_ENABLED
-ifneq ($(PROCESSOR),STM32G474xx)
-CFLAGS += -DHAL_ADC_MODULE_ENABLED
-CFLAGS += -DHAL_DAC_MODULE_ENABLED
-endif
+# CFLAGS += -DHAL_TIM_MODULE_ENABLED
+# ifneq ($(PROCESSOR),STM32G474xx)
+# CFLAGS += -DHAL_ADC_MODULE_ENABLED
+# CFLAGS += -DHAL_DAC_MODULE_ENABLED
+# endif
 
 LDFLAGS  = -Wall -g -std=c99 -Os
 LDFLAGS += -mlittle-endian -mcpu=cortex-m4
