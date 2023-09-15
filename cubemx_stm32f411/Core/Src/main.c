@@ -84,7 +84,7 @@ void StartBlink02(void *argument);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -293,7 +293,7 @@ void StartBlink01(void *argument)
   for(;;)
   {
 	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-	   osDelay(700);
+	   osDelay(1500);
   }
   /* USER CODE END 5 */
    osThreadTerminate(NULL);
