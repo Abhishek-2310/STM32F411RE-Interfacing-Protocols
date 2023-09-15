@@ -84,7 +84,7 @@ void StartBlink02(void *argument);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+  
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -296,6 +296,7 @@ void StartBlink01(void *argument)
 	   osDelay(700);
   }
   /* USER CODE END 5 */
+   osThreadTerminate(NULL);
 }
 
 /* USER CODE BEGIN Header_StartBlink02 */
@@ -315,6 +316,7 @@ void StartBlink02(void *argument)
      osDelay(1000);
   }
   /* USER CODE END StartBlink02 */
+   osThreadTerminate(NULL);
 }
 
 /**

@@ -77,7 +77,7 @@ CMSIS_DEV  = $(CMSIS)/Device/ST/STM32F4xx
 SRCS      += $(CUBEMX)/startup_stm32f411xe.s
 OPENOCD_BOARD = ./openocd/st_nucleo_f4.cfg
 CUBEMX_USES_CORE_DIR = YES
-FREERTOS_SRC_DIR = ./Middlewares/Third_Party/FreeRTOS/Source
+FREERTOS_SRC_DIR = Middlewares/Third_Party/FreeRTOS/Source
 endif
 
 
@@ -210,10 +210,10 @@ CFLAGS += --specs=nano.specs -u _printf_float
 # that there are multiple definitions for these macros.  Just remove
 # the offending one from this list, and rebuild.
 # CFLAGS += -DHAL_TIM_MODULE_ENABLED
-# ifneq ($(PROCESSOR),STM32G474xx)
-# CFLAGS += -DHAL_ADC_MODULE_ENABLED
-# CFLAGS += -DHAL_DAC_MODULE_ENABLED
-# endif
+ifneq ($(PROCESSOR),STM32G474xx)
+CFLAGS += -DHAL_ADC_MODULE_ENABLED
+CFLAGS += -DHAL_DAC_MODULE_ENABLED
+endif
 
 LDFLAGS  = -Wall -g -std=c99 -Os
 LDFLAGS += -mlittle-endian -mcpu=cortex-m4
