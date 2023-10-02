@@ -6,7 +6,7 @@
 
 /* Macros */
 #define MAX_TASKS 5
-#define TASK_KILLER 4
+#define TASK_KILLER 3
 
 
 /* Task Data Structure */
@@ -20,7 +20,7 @@ typedef struct Task_s
 /* Globals */
 Task_t tasks[MAX_TASKS];
 int32_t currentTask;
-uint8_t my_data[MAX_TASKS] = {10, 20, 30, 40, 50};
+uint8_t my_data[MAX_TASKS] = {10, 20, 30, 40, 50}; 
 
 static uint32_t Counter = 0;
 
