@@ -31,12 +31,11 @@ int32_t currentTask;
 uint8_t my_data[MAX_TASKS] = {10, 20, 30, 40}; 
 
 static uint32_t Counter = 0;
-
+uint8_t CmdTaskAdded = 0;
 
 /* Function Prototypes */
 int32_t TaskAdd(void (*f)(void *data), void *data);
 int32_t TaskKill(int32_t id);
-int32_t TaskCurrent(void);
 int32_t TaskSwitcher(void);
 static int32_t TaskNext(void);
 int32_t TaskPending(int32_t id); //new fn to Set task state to PENDING
@@ -63,8 +62,9 @@ ParserReturnVal_t Add_Task_Cmd(int mode)
 {
   if(mode != CMD_INTERACTIVE) return CmdReturnOk;
 
-  if(currentTask == 0 || TaskNext < 0)
+  if(CmdTaskAdded == 0)
   {
+    CmdTaskAdded = 1;
     printf("CmdAddTask adding Task1\n");
     TaskAdd(cmd_task1_func, &my_data[currentTask]);
 
