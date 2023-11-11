@@ -3,10 +3,12 @@
 
 /* Local headers */
 #include "common.h"
+#include "simple_semaphore.h"
 
 /* Macros */
-#define MAX_TASKS 4
+#define MAX_TASKS 5
 
+/* ENUMS */
 typedef enum {
   TASK_READY = 0,
   TASK_PENDING,
@@ -24,20 +26,25 @@ typedef struct Task_s
     TaskState_e state;
 } Task_t;
 
+/* External Globals */
+extern Semaphore_t Semaphores[MAX_SEMAPHORES];
 
 /* Globals */
 Task_t tasks[MAX_TASKS];
-int32_t currentTask;
-uint8_t my_data[MAX_TASKS] = {10, 20, 30, 40}; 
 
+int32_t currentTask;
 static uint32_t Counter = 0;
+uint8_t runCounter = 0;
 uint8_t CmdTaskAdded = 0;
+uint8_t my_data[MAX_TASKS] = {10, 20, 30, 40, 50}; 
 
 /* Function Prototypes */
 int32_t TaskAdd(void (*f)(void *data), void *data);
 int32_t TaskKill(int32_t id);
 int32_t TaskSwitcher(void);
 static int32_t TaskNext(void);
+
+int32_t TaskCurrent(void);
 int32_t TaskPending(int32_t id); //new fn to Set task state to PENDING
 int32_t TaskReady(int32_t id); //new fn to Set task state to READY
 
@@ -64,6 +71,7 @@ ParserReturnVal_t Add_Task_Cmd(int mode)
 
   if(CmdTaskAdded == 0)
   {
+    SemaphoreInit();
     CmdTaskAdded = 1;
     printf("CmdAddTask adding Task1\n");
     TaskAdd(cmd_task1_func, &my_data[currentTask]);
@@ -161,6 +169,17 @@ int32_t TaskAdd(void (*f)(void *data), void *data)
   return -1;
 }
 
+int32_t TaskKill(int32_t id)
+{
+  if(tasks[id].state == TASK_RUNNING)
+  {
+    tasks[id].state = TASK_INACTIVE;
+    return 0;
+  }
+
+  return -1;
+}
+
 char * getState(uint8_t task_state)
 {
   switch(task_state)
@@ -172,6 +191,11 @@ char * getState(uint8_t task_state)
   }
 
   return "NULL";
+}
+
+int32_t TaskCurrent(void)
+{
+  return currentTask;
 }
 
 int32_t TaskPending(int32_t id)
@@ -216,16 +240,6 @@ int32_t TaskReady(int32_t id)
   return 0;
 }
 
-int32_t TaskKill(int32_t id)
-{
-  if(tasks[id].state == TASK_RUNNING)
-  {
-    tasks[id].state = TASK_INACTIVE;
-    return 0;
-  }
-
-  return -1;
-}
 
 
 /* Find the next task to run */
@@ -239,7 +253,8 @@ static int32_t TaskNext(void)
   {
     i = (i + 1) % MAX_TASKS;
     count++;
-  } while((tasks[i].f == NULL) && (tasks[i].state != TASK_READY) && (count <= MAX_TASKS));
+  } while(((tasks[i].f == NULL) && (tasks[i].state != TASK_READY) 
+          && (count <= MAX_TASKS)) || (tasks[i].state == TASK_PENDING));
 
   return (count <= MAX_TASKS) ? i : -1;
 }
@@ -248,7 +263,7 @@ static int32_t TaskNext(void)
 void cmd_task1_func(void *data)
 {
   TaskAdd(task_run_func, &my_data[currentTask + 1]);
-  printf("Data: %u\nTaskId: %li\nState: %s\n", *((uint8_t *) data), currentTask, getState(tasks[currentTask + 1].state));
+  printf("\tData: %u\n\tTaskId: %li\n\tState: %s\n", *((uint8_t *) data), currentTask, getState(tasks[currentTask + 1].state));
 }
 
 
@@ -257,48 +272,210 @@ void task_run_func(void *data)
   tasks[currentTask].state = TASK_RUNNING;
   printf("Changing Task%ld state to TASK_RUNNING\r\n", currentTask);
 
-  if(currentTask == 3)
-  {
-    for(uint8_t i = 1; i <= currentTask; i++)
-    {
-      printf("Action: Task%ld killing Task%d\n", currentTask, i);
+  int32_t newTaskId;
+  static uint32_t uSemaphoreHandle;
 
-      if(TaskKill(i) < 0)
+  switch (currentTask)
+  {
+    case 1:
+
+      newTaskId = TaskAdd(task_run_func, &my_data[currentTask + 1]);
+      if(newTaskId < 0)
       {
-        printf("\tFailed to kill another Task (state: %s)\n", getState(tasks[i].state));
+        switch (runCounter)
+        {
+          case 1:
+            SemaphoreNew(&uSemaphoreHandle, 1, "Sem1");
+            printf("Action: Acquiring Semaphore\n");
+            if(SemaphoreAcquire(uSemaphoreHandle) == 0)
+            {
+              printf("\tAcquired Semaphore Succesfully\n");
+            }
+            break;
+
+          case 2:
+            printf("Action: Acquiring Semaphore\n");
+            if(SemaphoreAcquire(uSemaphoreHandle) == 0)
+            {
+              printf("\tAcquired Semaphore Succesfully\n");
+            }
+            break;
+
+          case 4:
+            printf("Action: Posting Semaphore\n");
+            if(SemaphorePost(uSemaphoreHandle) == 0)
+            {
+              printf("\tPosted Semaphore Succesfully\n");
+            }
+            break;
+
+          case 5:
+            printf("Action: Acquiring Semaphore\n");
+            if(SemaphoreAcquire(uSemaphoreHandle) == 0)
+            {
+              printf("\tAcquired Semaphore Succesfully\n");
+            }
+            break;
+
+          case 7:
+            printf("Action: Posting Semaphore\n");
+            if(SemaphorePost(uSemaphoreHandle) == 0)
+            {
+              printf("\tPosted Semaphore Succesfully\n");
+            }
+            break;
+
+          default:
+            break;
+        }
       }
       else
       {
-        if(i == 3)
-          printf("\tTask killed itself successfully\n");
-        else
-          printf("\tKilled task%d\n", i);
-
+        printf("Task%ld adding Task%ld\n", currentTask, newTaskId);
+        printf("\tData: %u\n\tTaskId: %li\n\tState: %s\n", *((uint8_t *) data), currentTask, getState(tasks[currentTask + 1].state));
       }
-    }
-    printf("--------------------------------> Task Switch!\n");
-    TaskReady(1);
-  }
-  else
-  {
-    int32_t newTaskId = TaskAdd(task_run_func, &my_data[currentTask + 1]);
-    if(newTaskId < 0)
-    {
-      TaskReady(currentTask + 1);
-    }
-    else
-    {
-      printf("Task%ld adding Task%ld\n", currentTask, newTaskId);
-      printf("Data: %u\nTaskId: %li\nState: %s\n", *((uint8_t *) data), currentTask, getState(tasks[currentTask + 1].state));
-    }
-    
-    if(currentTask == 1)
-    {
-      TaskPending(currentTask);
-    }
-    else
-    {
-      TaskReady(currentTask);
-    }
+      TaskReady(1);
+      break;
+
+    case 2:
+      newTaskId = TaskAdd(task_run_func, &my_data[currentTask + 1]);
+      if(newTaskId < 0)
+      {
+        switch (runCounter)
+        {
+          case 1:
+            printf("Action: Posting Semaphore\n");
+            if(SemaphorePost(uSemaphoreHandle) == 0)
+            {
+              printf("\tPosted Semaphore Succesfully\n");
+              TaskReady(2);
+            }
+            break;
+
+          case 2:
+            printf("Action: Acquiring Semaphore\n");
+            if(SemaphoreAcquire(uSemaphoreHandle) == 0)
+            {
+              printf("\tAcquired Semaphore Succesfully\n");
+              TaskReady(2);
+            }
+            else
+            {
+              printf("\tFailed to acquire Semaphore\n");
+            }
+            break;
+
+          case 4:
+            printf("\tTask2 acquired semaphore when Task1 posted,"
+                    " as it was waiting for this semaphore\n");
+            TaskReady(2); 
+            break;
+
+          case 5:
+            printf("Action: Acquiring Semaphore\n");
+            if(SemaphoreAcquire(uSemaphoreHandle) == 0)
+            {
+              printf("\tAcquired Semaphore Succesfully\n");
+              TaskReady(2);
+            }
+            else
+            {
+              printf("\tFailed to acquire Semaphore\n");
+            }
+            break;
+
+          case 7:
+            printf("\tTask2 acquired semaphore when Task1 posted,"
+                    " as it was waiting for this semaphore\n");
+            TaskReady(2); 
+            break;
+
+          default:
+            break;
+        }
+       
+      }
+      else
+      {
+        printf("Task%ld adding Task%ld\n", currentTask, newTaskId);
+        printf("\tData: %u\n\tTaskId: %li\n\tState: %s\n", *((uint8_t *) data), currentTask, getState(tasks[currentTask + 1].state));
+        TaskReady(2);
+      }
+      break;
+
+    case 3:
+
+      newTaskId = TaskAdd(task_run_func, &my_data[currentTask + 1]);
+      if(newTaskId < 0)
+      {
+        switch (runCounter)
+        {
+          case 1:
+            break;
+
+          case 2:
+            break;
+
+          case 5:
+            printf("Action: Acquiring Semaphore\n");
+            if(SemaphoreAcquire(uSemaphoreHandle) == 0)
+            {
+              printf("\tAcquired Semaphore Succesfully\n");
+              TaskReady(2);
+            }
+            else
+            {
+              printf("\tFailed to acquire Semaphore\n");
+            }
+            break;
+        
+          default:
+            break;
+        }
+      }
+      else
+      {
+        printf("Task%ld adding Task%ld\n", currentTask, newTaskId);
+        printf("\tData: %u\n\tTaskId: %li\n\tState: %s\n", *((uint8_t *) data), currentTask, getState(tasks[currentTask + 1].state));
+      }
+      
+      TaskReady(3);
+      break;
+
+    case 4:
+
+      switch (runCounter)
+      {
+        case 1:
+          break;
+
+        case 2:
+          break;
+
+        case 4:
+          printf("Action: Posting Semaphore\n");
+          if(SemaphorePost(uSemaphoreHandle) == 0)
+          {
+            printf("\tPosted Semaphore Succesfully\n");
+          }
+          break;
+      
+        case 7:
+          printf("Action: Posting Semaphore\n");
+          if(SemaphorePost(uSemaphoreHandle) == 0)
+          {
+            printf("\tPosted Semaphore Succesfully\n");
+          }
+          break;
+
+        default:
+          break;
+      }
+      runCounter++;
+      TaskReady(4);
+      break;
+  
+    default:
+      break;
   }
 }
