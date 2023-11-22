@@ -271,6 +271,7 @@ void task_run_func(void *data)
 {
   tasks[currentTask].state = TASK_RUNNING;
   printf("Changing Task%ld state to TASK_RUNNING\r\n", currentTask);
+  printf("###############Task%ld###############\r\n", currentTask);
 
   int32_t newTaskId;
   static uint32_t uSemaphoreHandle;
@@ -410,12 +411,6 @@ void task_run_func(void *data)
       {
         switch (runCounter)
         {
-          case 1:
-            break;
-
-          case 2:
-            break;
-
           case 5:
             printf("Action: Acquiring Semaphore\n");
             if(SemaphoreAcquire(uSemaphoreHandle) == 0)
@@ -446,12 +441,6 @@ void task_run_func(void *data)
 
       switch (runCounter)
       {
-        case 1:
-          break;
-
-        case 2:
-          break;
-
         case 4:
           printf("Action: Posting Semaphore\n");
           if(SemaphorePost(uSemaphoreHandle) == 0)
@@ -471,6 +460,7 @@ void task_run_func(void *data)
         default:
           break;
       }
+
       runCounter++;
       TaskReady(4);
       break;
