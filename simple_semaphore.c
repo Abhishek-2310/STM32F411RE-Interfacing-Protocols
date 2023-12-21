@@ -1,6 +1,5 @@
 #include <stdio.h>
 
-#include "common.h"
 #include "simple_semaphore.h"
 
 /* External Functions*/
